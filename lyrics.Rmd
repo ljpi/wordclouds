@@ -1,0 +1,193 @@
+---
+title: "Worldclouds - Music Lyrics"
+author: "Lester Pi"
+date: "2/25/2017"
+output:
+  pdf_document: default
+  html_document: default
+header-includes:
+  - \usepackage[dvipsnames]{xcolor}
+---
+
+```{r Setup, include=FALSE}
+library(base)
+library(tm)
+library(SnowballC)
+library(wordcloud)
+library(sqldf)
+library(knitr)
+library(rmarkdown)
+
+```
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.path='Figs/',
+                      echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+```{r set Width}
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+opts_chunk$set(dev = 'pdf')
+```
+
+
+#Introduction
+
+Wordclouds are cool, and what better way to play around with them than music lyrics?
+
+The data I am working with includes 380,000+ lyrics from MetroLyrics spanning 10 different genres (omitted NA and Other genres). Let's see what we can find.
+
+Being a fan of Rap and Hip-Hop, what better way to start things off with than...
+
+
+```{r}
+setwd("/Users/lesterpi/Desktop/Folders/Random Junk/other/lyrics")
+lyrics = read.csv("lyrics.csv",stringsAsFactors = FALSE)
+genres = sqldf("select genre from lyrics group by genre")
+
+#split into genres
+country = sqldf("select * from lyrics where genre='Country'")
+electronic = sqldf("select * from lyrics where genre='Electronic'")
+folk = sqldf("select * from lyrics where genre='Folk'")
+hiphop = sqldf("select * from lyrics where genre='Hip-Hop'")
+indie = sqldf("select * from lyrics where genre='Indie'")
+jazz = sqldf("select * from lyrics where genre='Jazz'")
+metal = sqldf("select * from lyrics where genre='Metal'")
+pop = sqldf("select * from lyrics where genre='Pop'")
+rb = sqldf("select * from lyrics where genre='R&B'")
+rock = sqldf("select * from lyrics where genre='Rock'")
+```
+
+
+
+```{r}
+#add n word as stopword for obvious reasons
+#remove punc
+stopWords = c(removePunctuation(stopwords('SMART')),"nigga","niggas","niggaz")
+#data - dataset
+#pal - color palette
+#val - value of color palette
+#stem - 1 for stemming on
+buildWordCloud = function(data, pal,val,stem, name){
+  corpus = Corpus(VectorSource(data$lyrics))
+  corpus = tm_map(corpus, content_transformer(tolower))
+  corpus = tm_map(corpus, PlainTextDocument)
+  corpus = tm_map(corpus, removePunctuation)
+  corpus = tm_map(corpus, removeWords, stopWords)
+  if(stem==1) corpus = tm_map(corpus, stemDocument)
+  wordcloud(corpus, max.words = 75, random.order = FALSE, colors=brewer.pal(val,pal), main = name)
+}
+
+```
+
+#The Evolution of Hip Hop
+
+By subsetting the data by decades, it will be easy to see how word usage has changed over time. My particular interest is to see which era of Hip-Hop popularized "money and bitches" mentality and what does the current decade hold in the lyrical skills of present day MCs. For obvious reasons, I added some non-traditional stopwords to the analysis. Also take note that the pre 90s Hip-Hop subset has less than 150 observations, while the other eras have plenty more.
+
+The first set of wordclouds has stemming off.
+
+
+```{r}
+#subset data by years
+hiphop80s = sqldf("select * from hiphop where (year > 1900 and year < 1990)")
+hiphop90s = sqldf("select * from hiphop where (year >= 1990 and year < 2000)")
+hiphop00s = sqldf("select * from hiphop where (year >= 2000 and year < 2010)")
+hiphop10s = sqldf("select * from hiphop where (year >= 2010 and year < 2020)")
+```
+
+\begin{center}
+
+\textbf{Pre 1990s Hip Hop (Stemming Off)}
+```{r, fig.align="center"}
+buildWordCloud(hiphop80s,"Spectral",8,0, "Pre 90s Hip Hop")
+```
+
+
+\textbf{1990s Hip Hop (Stemming Off)}
+```{r, fig.align="center"}
+buildWordCloud(hiphop90s,"Set1",8,0, "1990-2000")
+```
+
+
+
+\textbf{2000s Hip Hop (Stemming Off)}
+```{r, fig.align="center"}
+buildWordCloud(hiphop00s,"Dark2",8,0, "2000 - 2010")
+```
+
+
+
+\textbf{2010s Hip Hop (Stemming Off)}
+```{r, fig.align="center"}
+buildWordCloud(hiphop10s,"Paired",8,0, "2010 and Onward")
+```
+
+
+\textbf{Pre 1990s Hip Hop (Stemming On)}
+```{r, fig.align="center"}
+buildWordCloud(hiphop80s,"Spectral",8,1, "Pre 90s Hip Hop")
+```
+
+
+
+\textbf{1990s Hip Hop (Stemming On)}
+```{r, fig.align="center"}
+buildWordCloud(hiphop90s,"Set1",8,1, "1990-2000")
+```
+
+
+
+\textbf{2000s Hip Hop (Stemming On)}
+```{r, fig.align="center"}
+buildWordCloud(hiphop00s,"Dark2",8,1, "2000 - 2010")
+```
+
+
+
+\textbf{2010s Hip Hop (Stemming On)}
+```{r, fig.align="center"}
+buildWordCloud(hiphop10s,"Paired",8,1, "2010 and Onward")
+```
+
+\end{center}
+
+
+It's pretty easy to see Hip-Hop has gotten a lot more vulgar since its conception. The rise of "money and bitches" can be attributed to the 90s and carrys on today. 
+
+I find it pretty interesting the type of words that are common in the more vulgar eras don't actually rhyme with each other. Is Hip-Hop becoming less creative and reliant more on filler words? I'd say that is somehwhat true if we are to generalize. Contrasting stemming on or off, however, it looks like people are getting more creative with different variations of their vulgarities.
+
+#But Wait, There's More!
+
+Just for fun, here's worldclouds, with stemming on, of other genres!
+
+Top Row: \textcolor{BlueViolet}{Pop}, \textcolor{BlueViolet}{Ja}\textcolor{ForestGreen}{az}, \textcolor{ForestGreen}{R\&B}
+
+Middle Row: \textcolor{BlueViolet}{Elec}\textcolor{ForestGreen}{tro}\textcolor{Dandelion}{nic}, \textcolor{darkgray}{Metal}, \textcolor{Dandelion}{Cou}\textcolor{BurntOrange}{nt}\textcolor{red}{ry}
+
+Bottom Row: \textcolor{BurntOrange}{Rock}, \textcolor{BurntOrange}{Fo}\textcolor{red}{lk}, \textcolor{red}{Indie}
+
+```{r}
+par(mfrow=c(3,3))
+buildWordCloud(pop,"Blues",11,1, "Pop")
+buildWordCloud(jazz,"BuGn",11,1, "Jazz")
+buildWordCloud(rb,"Greens",11,1, "R&B")
+buildWordCloud(electronic,"YlGnBu",11,1, "Electronic")
+buildWordCloud(metal,"Greys",11,1, "Metal")
+buildWordCloud(country,"YlOrRd",11,1, "Country")
+buildWordCloud(rock,"Oranges",11,1, "Rock")
+buildWordCloud(folk,"OrRd",11,1, "Folk")
+buildWordCloud(indie,"Reds",11,1, "Indie")
+```
+
+#Closing Comments
+
+Personally, I find it pretty funny most generes of music have "love" as their top word, besides Metal and Hip-Hop. Does this mean most music was derived from love? Or could it be a sign that music was created as a mating ritual  (assuming mating biologically evolved into our concept of love)?
+
+What does this say about the genres of music not as focused on love? I belive it shows the nature of metal and hip hop. I don't listen to metal music, so I can't comment without genearlizing the whole genre. However, I can say that not all Hip-Hop is about "money and bitches" and, at least in my view, the quality Hip-Hop has subject matter deeper than soley materialistic matters. At least for me, this just goes to show that "good" Hip-Hop is hard to find, especially in recent times.
+
+#Sources
+
+Kaggle: https://www.kaggle.com/gyani95/380000-lyrics-from-metrolyrics
+
+MetroLyrics: Original source of Kaggle data
+
