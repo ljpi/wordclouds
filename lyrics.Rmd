@@ -3,13 +3,13 @@ title: "Worldclouds - Music Lyrics"
 author: "Lester Pi"
 date: "2/25/2017"
 output:
-  pdf_document: default
   html_document: default
-header-includes:
-  - \usepackage[dvipsnames]{xcolor}
+  pdf_document:
+    latex_engine: xelatex
+header-includes: \usepackage[dvipsnames]{xcolor}
 ---
 
-```{r Setup, include=FALSE}
+```{r Setup, include=FALSE, echo=FALSE, warning=FALSE, message=FALSE}
 library(base)
 library(tm)
 library(SnowballC)
@@ -17,15 +17,15 @@ library(wordcloud)
 library(sqldf)
 library(knitr)
 library(rmarkdown)
+library(tcltk)
 
 ```
 
-```{r global_options, include=FALSE}
-knitr::opts_chunk$set(fig.path='Figs/',
-                      echo=FALSE, warning=FALSE, message=FALSE)
+```{r global_options, echo=FALSE, warning=FALSE, message=FALSE}
+knitr::opts_chunk$set(fig.path='Figs/')
 ```
 
-```{r set Width}
+```{r set Width, echo=FALSE, warning=FALSE, message=FALSE}
 opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
 opts_chunk$set(dev = 'pdf')
 ```
@@ -40,8 +40,8 @@ The data I am working with includes 380,000+ lyrics from MetroLyrics spanning 10
 Being a fan of Rap and Hip-Hop, what better way to start things off with than...
 
 
-```{r}
-setwd("/Users/lesterpi/Desktop/Folders/Random Junk/other/lyrics")
+```{r,echo=FALSE, warning=FALSE, message=FALSE}
+setwd("C:/cygwin64/home/Lester/wordclouds")
 lyrics = read.csv("lyrics.csv",stringsAsFactors = FALSE)
 genres = sqldf("select genre from lyrics group by genre")
 
@@ -60,7 +60,7 @@ rock = sqldf("select * from lyrics where genre='Rock'")
 
 
 
-```{r}
+```{r,echo=FALSE, warning=FALSE, message=FALSE}
 #add n word as stopword for obvious reasons
 #remove punc
 stopWords = c(removePunctuation(stopwords('SMART')),"nigga","niggas","niggaz")
@@ -87,7 +87,7 @@ By subsetting the data by decades, it will be easy to see how word usage has cha
 The first set of wordclouds has stemming off.
 
 
-```{r}
+```{r,echo=FALSE, warning=FALSE, message=FALSE}
 #subset data by years
 hiphop80s = sqldf("select * from hiphop where (year > 1900 and year < 1990)")
 hiphop90s = sqldf("select * from hiphop where (year >= 1990 and year < 2000)")
@@ -98,54 +98,54 @@ hiphop10s = sqldf("select * from hiphop where (year >= 2010 and year < 2020)")
 \begin{center}
 
 \textbf{Pre 1990s Hip Hop (Stemming Off)}
-```{r, fig.align="center"}
+```{r, fig.align="center",echo=FALSE, warning=FALSE, message=FALSE}
 buildWordCloud(hiphop80s,"Spectral",8,0, "Pre 90s Hip Hop")
 ```
 
 
 \textbf{1990s Hip Hop (Stemming Off)}
-```{r, fig.align="center"}
+```{r, fig.align="center",echo=FALSE, warning=FALSE, message=FALSE}
 buildWordCloud(hiphop90s,"Set1",8,0, "1990-2000")
 ```
 
 
 
 \textbf{2000s Hip Hop (Stemming Off)}
-```{r, fig.align="center"}
+```{r, fig.align="center",echo=FALSE, warning=FALSE, message=FALSE}
 buildWordCloud(hiphop00s,"Dark2",8,0, "2000 - 2010")
 ```
 
 
 
 \textbf{2010s Hip Hop (Stemming Off)}
-```{r, fig.align="center"}
+```{r, fig.align="center",echo=FALSE, warning=FALSE, message=FALSE}
 buildWordCloud(hiphop10s,"Paired",8,0, "2010 and Onward")
 ```
 
 
 \textbf{Pre 1990s Hip Hop (Stemming On)}
-```{r, fig.align="center"}
+```{r, fig.align="center",echo=FALSE, warning=FALSE, message=FALSE}
 buildWordCloud(hiphop80s,"Spectral",8,1, "Pre 90s Hip Hop")
 ```
 
 
 
 \textbf{1990s Hip Hop (Stemming On)}
-```{r, fig.align="center"}
+```{r, fig.align="center",echo=FALSE, warning=FALSE, message=FALSE}
 buildWordCloud(hiphop90s,"Set1",8,1, "1990-2000")
 ```
 
 
 
 \textbf{2000s Hip Hop (Stemming On)}
-```{r, fig.align="center"}
+```{r, fig.align="center",echo=FALSE, warning=FALSE, message=FALSE}
 buildWordCloud(hiphop00s,"Dark2",8,1, "2000 - 2010")
 ```
 
 
 
 \textbf{2010s Hip Hop (Stemming On)}
-```{r, fig.align="center"}
+```{r, fig.align="center",echo=FALSE, warning=FALSE, message=FALSE}
 buildWordCloud(hiphop10s,"Paired",8,1, "2010 and Onward")
 ```
 
@@ -160,23 +160,25 @@ I find it pretty interesting the type of words that are common in the more vulga
 
 Just for fun, here's worldclouds, with stemming on, of other genres!
 
+\begin{center}
 Top Row: \textcolor{BlueViolet}{Pop}, \textcolor{BlueViolet}{Ja}\textcolor{ForestGreen}{az}, \textcolor{ForestGreen}{R\&B}
 
 Middle Row: \textcolor{BlueViolet}{Elec}\textcolor{ForestGreen}{tro}\textcolor{Dandelion}{nic}, \textcolor{darkgray}{Metal}, \textcolor{Dandelion}{Cou}\textcolor{BurntOrange}{nt}\textcolor{red}{ry}
 
 Bottom Row: \textcolor{BurntOrange}{Rock}, \textcolor{BurntOrange}{Fo}\textcolor{red}{lk}, \textcolor{red}{Indie}
+\end{center}
 
-```{r}
+```{r,fig.align="center",echo=FALSE, warning=FALSE, message=FALSE}
 par(mfrow=c(3,3))
-buildWordCloud(pop,"Blues",11,1, "Pop")
-buildWordCloud(jazz,"BuGn",11,1, "Jazz")
-buildWordCloud(rb,"Greens",11,1, "R&B")
-buildWordCloud(electronic,"YlGnBu",11,1, "Electronic")
-buildWordCloud(metal,"Greys",11,1, "Metal")
-buildWordCloud(country,"YlOrRd",11,1, "Country")
-buildWordCloud(rock,"Oranges",11,1, "Rock")
-buildWordCloud(folk,"OrRd",11,1, "Folk")
-buildWordCloud(indie,"Reds",11,1, "Indie")
+buildWordCloud(pop,"Blues",9,1, "Pop")
+buildWordCloud(jazz,"BuGn",9,1, "Jazz")
+buildWordCloud(rb,"Greens",9,1, "R&B")
+buildWordCloud(electronic,"YlGnBu",9,1, "Electronic")
+buildWordCloud(metal,"Greys",9,1, "Metal")
+buildWordCloud(country,"YlOrRd",9,1, "Country")
+buildWordCloud(rock,"Oranges",9,1, "Rock")
+buildWordCloud(folk,"OrRd",9,1, "Folk")
+buildWordCloud(indie,"Reds",9,1, "Indie")
 ```
 
 #Closing Comments
