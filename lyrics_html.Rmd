@@ -41,7 +41,12 @@ Being a fan of Rap and Hip-Hop, what better way to start things off with than...
 
 
 ```{r,echo=FALSE, warning=FALSE, message=FALSE}
-setwd("C:/cygwin64/home/Lester/wordclouds")
+#for pc
+#setwd("C:/cygwin64/home/Lester/wordclouds")
+
+#for mac
+setwd("/Users/lesterpi/Desktop/Folders/Random Junk/other/lyrics")
+
 lyrics = read.csv("lyrics.csv",stringsAsFactors = FALSE)
 genres = sqldf("select genre from lyrics group by genre")
 
@@ -95,61 +100,61 @@ hiphop00s = sqldf("select * from hiphop where (year >= 2000 and year < 2010)")
 hiphop10s = sqldf("select * from hiphop where (year >= 2010 and year < 2020)")
 ```
 
-\begin{center}
+<center>
 
-\textbf{Pre 1990s Hip Hop (Stemming Off)}
+<b>Pre 1990s Hip Hop (Stemming Off)</b>
 ```{r, fig.align="center",echo=FALSE, warning=FALSE, message=FALSE}
 buildWordCloud(hiphop80s,"Spectral",8,0, "Pre 90s Hip Hop")
 ```
 
 
-\textbf{1990s Hip Hop (Stemming Off)}
+<b>1990s Hip Hop (Stemming Off)</b>
 ```{r, fig.align="center",echo=FALSE, warning=FALSE, message=FALSE}
 buildWordCloud(hiphop90s,"Set1",8,0, "1990-2000")
 ```
 
 
 
-\textbf{2000s Hip Hop (Stemming Off)}
+<b>2000s Hip Hop (Stemming Off)</b>
 ```{r, fig.align="center",echo=FALSE, warning=FALSE, message=FALSE}
 buildWordCloud(hiphop00s,"Dark2",8,0, "2000 - 2010")
 ```
 
 
 
-\textbf{2010s Hip Hop (Stemming Off)}
+<b>2010s Hip Hop (Stemming Off)</b>
 ```{r, fig.align="center",echo=FALSE, warning=FALSE, message=FALSE}
 buildWordCloud(hiphop10s,"Paired",8,0, "2010 and Onward")
 ```
 
 
-\textbf{Pre 1990s Hip Hop (Stemming On)}
+<b>Pre 1990s Hip Hop (Stemming On)</b>
 ```{r, fig.align="center",echo=FALSE, warning=FALSE, message=FALSE}
 buildWordCloud(hiphop80s,"Spectral",8,1, "Pre 90s Hip Hop")
 ```
 
 
 
-\textbf{1990s Hip Hop (Stemming On)}
+<b>1990s Hip Hop (Stemming On)</b>
 ```{r, fig.align="center",echo=FALSE, warning=FALSE, message=FALSE}
 buildWordCloud(hiphop90s,"Set1",8,1, "1990-2000")
 ```
 
 
 
-\textbf{2000s Hip Hop (Stemming On)}
+<b>2000s Hip Hop (Stemming On)</b>
 ```{r, fig.align="center",echo=FALSE, warning=FALSE, message=FALSE}
 buildWordCloud(hiphop00s,"Dark2",8,1, "2000 - 2010")
 ```
 
 
 
-\textbf{2010s Hip Hop (Stemming On)}
+<b>2010s Hip Hop (Stemming On)</b>
 ```{r, fig.align="center",echo=FALSE, warning=FALSE, message=FALSE}
-buildWordCloud(hiphop10s,"Paired",8,1, "2010 and Onward")
+#buildWordCloud(hiphop10s,"Paired",8,1, "2010 and Onward")
 ```
 
-\end{center}
+</center>
 
 
 It's pretty easy to see Hip-Hop has gotten a lot more vulgar since its conception. The rise of "money and bitches" can be attributed to the 90s and carrys on today. 
@@ -160,13 +165,13 @@ I find it pretty interesting the type of words that are common in the more vulga
 
 Just for fun, here's worldclouds, with stemming on, of other genres!
 
-\begin{center}
-Top Row: \textcolor{BlueViolet}{Pop}, \textcolor{BlueViolet}{Ja}\textcolor{ForestGreen}{zz}, \textcolor{ForestGreen}{R\&B}
+<center>
+Top Row: <font color="darkblue">Pop</font>, <font color="darkblue">Ja</font><font color="forestgreen">zz</font>, <font color="forestgreen">R\&B</font>
 
-Middle Row: \textcolor{BlueViolet}{Elec}\textcolor{ForestGreen}{tro}\textcolor{Dandelion}{nic}, \textcolor{darkgray}{Metal}, \textcolor{Dandelion}{Cou}\textcolor{BurntOrange}{nt}\textcolor{red}{ry}
+Middle Row: <font color="darkblue">Elec</font><font color="forestgreen">tro</font><font color="dandelion">nic</font>, <font color="darkgray">Metal</font>, <font color="dandelion">Cou</font><font color="darkorange">nt</font><font color="red">ry</font>
 
-Bottom Row: \textcolor{BurntOrange}{Rock}, \textcolor{BurntOrange}{Fo}\textcolor{red}{lk}, \textcolor{red}{Indie}
-\end{center}
+Bottom Row: <font color="darkorange">Rock</font>, <font color="darkorange">Fo</font><font color="red">lk</font>, <font color="red">Indie</font>
+</center>
 
 ```{r,fig.align="center",echo=FALSE, warning=FALSE, message=FALSE}
 par(mfrow=c(3,3))
